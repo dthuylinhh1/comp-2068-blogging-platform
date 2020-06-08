@@ -1,0 +1,27 @@
+<%- include ('../partials/header') %>
+<div class="container my-5">
+    <header class="jumbotron">
+        <h1>Contact Me</h1>
+    </header>
+
+    <div>
+        <p>Hello! I am Linh Dao and I am 26. Please leave your information below and I will get to you shortly!</p>
+    </div>
+    <div>
+        <form>
+            <label for="fname">First name:</label><br>
+            <input type="text" id="fname" name="fname"><br>
+            <label for="lname">Last name:</label><br>
+            <input type="text" id="lname" name="lname"><br>
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="email"><br>
+            <label for="purpose">Contact Purpose:</label><br>
+            <input type="radio" id="work" name="purpose" value="work">
+            <label for="work">Work</label><br>
+            <input type="radio" id="other" name="purpose" value="other">
+            <label for="other">Other</label><br>
+            <input type="submit" value="Submit">
+          </form>
+    </div>
+</div>
+<%- include ('../partials/footer') %>
