@@ -6,16 +6,29 @@ exports.index = (req, res) =>{
     res.send('Got to catch em all');
 };
 
-exports.show = (req, res) =>{
-    res.send("Yeah!");
+exports.show = async (req, res) =>{
+    const blog = await Blog.findById(req.params.id);
+    res.render(`${viewPath}/show`, {
+        pageTitle: blog.title,
+        blog: blog
+    });
 };
 
 exports.new = (req, res) => {
-    res.send(`Howdy Dowdy`);
+    res.render(`${viewPath}/new`, {
+        pageTitle: 'New Blog'
+    });
 };
 
-exports.create = (req, res) => {
-    res.send('Hi there');
+exports.create = async (req, res) => {
+    try{
+        const blog = await Blog.create(req.body);
+        res.redirect(`/blogs/${blog.id}`);
+    }catch(err){
+        console.error(err);
+        res.send(err);
+    }
+
 };
 
 exports.edit = (req, res) =>{
