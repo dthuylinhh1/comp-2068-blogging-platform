@@ -23,10 +23,11 @@ exports.new = (req, res) => {
 exports.create = async (req, res) => {
     try{
         const blog = await Blog.create(req.body);
+        req.flash('success', 'Blog created successfully');
         res.redirect(`/blogs/${blog.id}`);
     }catch(err){
-        console.error(err);
-        res.send(err);
+        req.flash('danger', `There was an error creating this blog: ${error} `);
+        res.redirect('/new');
     }
 
 };

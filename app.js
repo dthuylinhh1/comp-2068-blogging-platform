@@ -28,10 +28,34 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+// Set up our session
+const session = require('express-session');
+app.use(session({
+    secret: 'any salty secret here',
+    resave: true,
+    saveUninitialized: false
+}));
+
+// Set up flash notification
+const flash = require('connect-flash');
+app.use(flash());
+app.use('/', (req,res,next) => {
+    // setting default locals
+    res.locals.pageTitle = "Untitled";
+
+
+    // Passing along flash message
+    res.locals.flash = req.flash();
+    console.log(res.locals.flash);
+
+    next();
+});
+
 // Our routes
 const routes = require('./routes.js');
 app.use('/', routes);
 
 // Start our server
-app.listen(process.env.PORT || 3000, port => console.log
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log
     (`listening on port ${port}`));
