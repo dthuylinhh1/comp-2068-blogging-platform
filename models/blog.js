@@ -39,5 +39,11 @@ BlogSchema.query.published = function (){
     })
 };
 
+BlogSchema.virtual('synopsis')
+.get(function () {
+    const post = this.content;
+    return post.substring(0,250);
+});
+
 // export our mongoose model
 module.exports = mongoose.model('Blog', BlogSchema);

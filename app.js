@@ -46,6 +46,8 @@ app.use('/', (req,res,next) => {
 
     // Passing along flash message
     res.locals.flash = req.flash();
+    res.locals.formData = req.session.formData || {};
+    req.session.formData = {};
     console.log(res.locals.flash);
 
     next();
