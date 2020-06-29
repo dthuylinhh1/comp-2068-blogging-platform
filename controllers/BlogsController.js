@@ -2,9 +2,14 @@ const viewPath = ('blogs');
 
 const Blog = require('../models/blog');
 
+const User = require('../models/user');
+
 exports.index = async (req, res) =>{
     try{
-        const blogs = await Blog.find();
+        const blogs = await Blog.find()
+        .populate('user')
+        .sort({updatedAt: 'desc'});
+        
         res.render(`${viewPath}/index`,{
             pageTitle: 'Archive',
             blogs: blogs
@@ -17,7 +22,7 @@ exports.index = async (req, res) =>{
 
 exports.show = async (req, res) =>{
     try {
-        const blog = await Blog.findById(req.params.id);
+        const blog = await Blog.findById(req.params.id).populate('user');
         res.render(`${viewPath}/show`, {
             pageTitle: blog.title,
             blog: blog
@@ -35,8 +40,11 @@ exports.new = (req, res) => {
 };
 
 exports.create = async (req, res) => {
+    
     try{
-        const blog = await Blog.create(req.body);
+        const {user: email} = req.session.passport;
+        const user = await User.findOne({email: email});
+        const blog = await Blog.create({user: user._id ,...req.body});
         req.flash('success', 'Blog created successfully');
         res.redirect(`/blogs/${blog.id}`);
     }catch(error){
@@ -62,16 +70,18 @@ exports.edit = async (req, res) =>{
 };
 
 exports.update = async (req, res) => {
+    
     try {
-    //   const { user: email } = req.session.passport;
-    //   const user = await User.findOne({email: email});
-  
+      const { user: email } = req.session.passport;
+      const user = await User.findOne({email: email});
+       
+    
       let blog = await Blog.findById(req.body.id);
       if (!blog) throw new Error('Blog could not be found');
   
-    //   const attributes = {user: user._id, ...req.body};
-      await Blog.validate(req.body);
-      await Blog.findByIdAndUpdate(req.body.id, req.body);
+      const attributes = {user: user._id, ...req.body};
+      await Blog.validate(attributes);
+      await Blog.findByIdAndUpdate(attributes.id, attributes);
   
       req.flash('success', 'The blog was updated successfully');
       res.redirect(`/blogs/${req.body.id}`);
@@ -82,6 +92,7 @@ exports.update = async (req, res) => {
   };
 
   exports.delete = async (req, res) => {
+    
     try {
       console.log(req.body);
       await Blog.deleteOne({_id: req.body.id});

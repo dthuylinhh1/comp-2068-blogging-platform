@@ -6,6 +6,11 @@ const mongoose = require('mongoose');
 // Schema is a Blueprint of how our documents are look like
 // Every document will have title, content, status and timestamp
 const BlogSchema = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     // attributes are like column headings in db
     title:{
         type: String, 
