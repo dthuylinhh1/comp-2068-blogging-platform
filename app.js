@@ -38,6 +38,7 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+
 // Set our views directory
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -68,8 +69,17 @@ app.use('/', (req, res, next) => {
 
 // Our routes
 const routes = require('./routes.js');
-app.use('/', routes);
+app.use('/api', routes);
+
+app.get('/test', (req,res) => {
+  res.status(200).json({message: 'Hello World'});
+})
+
+app.use(express.static(path.join(__dirname, 'client/build')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname+'/client/build/index.html'));
+});
 
 // Start our server
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 app.listen(port, () => console.log(`Listening on port ${port}`));

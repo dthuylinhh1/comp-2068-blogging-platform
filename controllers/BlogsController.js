@@ -10,26 +10,20 @@ exports.index = async (req, res) =>{
         .populate('user')
         .sort({updatedAt: 'desc'});
         
-        res.render(`${viewPath}/index`,{
-            pageTitle: 'Archive',
-            blogs: blogs
-        });
+        res.status(200).json(blogs);
     }catch (error){
-        req.flash('danger', `There was an error displaying an archive: ${error}`);
-        res.redirect('/');
+        res.status(400).json({
+            message: ' There was an error fetching the blogs', error
+        });
     }
 };
 
 exports.show = async (req, res) =>{
     try {
         const blog = await Blog.findById(req.params.id).populate('user');
-        res.render(`${viewPath}/show`, {
-            pageTitle: blog.title,
-            blog: blog
-        });
+        res.status(200).json(blog);
     }catch (error){
-        req.flash('danger', `There was an error displaying this blog: ${error}`);
-        res.redirect('/blogs');
+        res.status(400).json({message:"There was an error editing this blog!"});
     }   
 };
 
@@ -40,17 +34,16 @@ exports.new = (req, res) => {
 };
 
 exports.create = async (req, res) => {
-    
+    console.log(req.body);
     try{
         const {user: email} = req.session.passport;
         const user = await User.findOne({email: email});
         const blog = await Blog.create({user: user._id ,...req.body});
-        req.flash('success', 'Blog created successfully');
-        res.redirect(`/blogs/${blog.id}`);
+        res.status(200).json(blog);
     }catch(error){
-        req.flash('danger', `There was an error creating this blog: ${error} `);
-        req.session.formData = req.body;
-        res.redirect('/blogs/new');
+        res.status(400).json({
+            message: "There was an error creating this blog post", error
+        });
     }
 
 };
@@ -96,10 +89,8 @@ exports.update = async (req, res) => {
     try {
       console.log(req.body);
       await Blog.deleteOne({_id: req.body.id});
-      req.flash('success', 'The blog was deleted successfully');
-      res.redirect(`/blogs`);
+      res.status(200).json({message:"Yay"});
     } catch (error) {
-      req.flash('danger', `There was an error deleting this blog: ${error}`);
-      res.redirect(`/blogs`);
+        res.status(400).json({message:"There was an error deleting this blog"});
     }
   };
